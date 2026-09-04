@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bidirectional Vocabulary Test</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #333333;
+      --correct-bg: #dcfce7;
+      --correct-border: #16a34a;
+      --incorrect-bg: #fee2e2;
+      --incorrect-border: #dc2626;
+      --assisted-bg: #fef9c3;
+      --assisted-border: #ca8a04;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.5;
+    }
+    h1 { text-align: center; color: #1e293b; }
+    p.subtitle { text-align: center; color: #64748b; margin-bottom: 2rem; }
+    .status-bar {
+      position: sticky;
+      top: 10px;
+      background: #1e293b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      z-index: 100;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .score-box {
+      display: flex;
+      gap: 15px;
+      font-weight: bold;
+    }
+    .controls-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .q-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .q-sentence {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .q-num {
+      font-weight: bold;
+      color: #2563eb;
+      margin-right: 6px;
+    }
+    input[type="text"] {
+      padding: 6px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    input[type="text"].correct {
+      background-color: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: #14532d;
+      font-weight: bold;
+    }
+    input[type="text"].incorrect {
+      background-color: var(--incorrect-bg);
+      border-color: var(--incorrect-border);
+      color: #7f1d1d;
+    }
+    input[type="text"].assisted {
+      background-color: var(--assisted-bg);
+      border-color: var(--assisted-border);
+      color: #713f12;
+      font-weight: bold;
+    }
+    .feedback {
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+    .feedback.correct { color: var(--correct-border); }
+    .feedback.incorrect { color: var(--incorrect-border); }
+    .feedback.assisted { color: var(--assisted-border); }
+    
+    .q-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .hint-text {
+      font-size: 0.85rem;
+      color: #475569;
+      font-style: italic;
+    }
+    
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .btn.reset { background: #ef4444; }
+    .btn.reset:hover { background: #dc2626; }
+    .btn.secondary { background: #475569; }
+    .btn.secondary:hover { background: #334155; }
+    
+    .btn-sm {
+      background: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .btn-sm:hover { background: #cbd5e1; }
+  </style>
+</head>
+<body>
+
+  <h1 id="quiz-title">Bidirectional Vocabulary Test</h1>
+  <p class="subtitle">Type your answer, or use the <b>Hint</b> and <b>Show Answer</b> options if stuck!</p>
+
+  <div class="status-bar">
+    <div class="score-box">
+      <span>Independent: <span id="score-ind">0</span> / <span id="total-questions">0</span></span>
+      <span>Assisted: <span id="score-ast">0</span></span>
+    </div>
+    <div class="controls-group">
+      <button class="btn secondary" onclick="exportJSON()">📥 Export JSON</button>
+      <button class="btn secondary" onclick="document.getElementById('import-file').click()">📤 Import JSON</button>
+      <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importJSON(event)" />
+      <button class="btn" onclick="shuffleAndRender()">Reshuffle</button>
+      <button class="btn reset" onclick="resetAnswers()">Clear Answers</button>
+    </div>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <script>
+    let quizTitle = "Bidirectional Vocabulary Test";
+
+    // Dataset testing both Definition -> Word AND Word -> Definition
+    let allQuestions = [
+      // 1. Temperature
+      { promptPre: "The measure of average kinetic energy of an object is called", correct: ["temperature"], hint: "Starts with 'T'. Think thermometer.", promptPost: "." },
+      { promptPre: "Temperature is defined as the measure of the average", correct: ["kinetic energy", "kinetic"], hint: "Energy associated with motion.", promptPost: "of an object." },
+
+      // 2. Volume
+      { promptPre: "Volume is the measure of the amount of", correct: ["space"], hint: "3D dimensions taking up place.", promptPost: "that an object occupies in three dimensions." },
+      { promptPre: "The term for the amount of three-dimensional space an object takes up is", correct: ["volume"], hint: "Starts with 'V'. Measured in liters or cubic cm.", promptPost: "." },
+
+      // 3. Mass
+      { promptPre: "The amount of matter that makes up an object is its", correct: ["mass"], hint: "Starts with 'M'. Doesn't change on the moon.", promptPost: "." },
+      { promptPre: "Mass is formally defined as the amount of", correct: ["matter"], hint: "The 'stuff' that makes up all physical objects.", promptPost: "that makes up an object." },
+
+      // 4. Weight
+      { promptPre: "Weight measures heaviness and fluctuates based on", correct: ["gravitational"], hint: "The force pulling down on you.", promptPost: "pull." },
+      { promptPre: "The measurement of heaviness caused by the pull of gravity on an object is its", correct: ["weight"], hint: "Starts with 'W'. Changes if you go to the Moon.", promptPost: "." },
+
+      // 5. Quantitative Data
+      { promptPre: "Data measured and expressed with numbers is called", correct: ["quantitative", "quantitative data"], hint: "Think 'Quantity' (numbers).", promptPost: "data." },
+      { promptPre: "Quantitative data is best defined as information expressed through", correct: ["numbers", "numerical values", "number"], hint: "Think count or measurement.", promptPost: "." },
+
+      // 6. Qualitative Data
+      { promptPre: "Descriptive data using the 5 senses is known as", correct: ["qualitative", "qualitative data"], hint: "Think 'Quality' (descriptions).", promptPost: "data." },
+      { promptPre: "Qualitative data is best defined as data gathering details using the five", correct: ["senses", "sense"], hint: "Sight, smell, touch, taste, hearing.", promptPost: "." }
+    ];
+
+    function initQuiz() {
+      document.getElementById('quiz-title').textContent = quizTitle;
+      document.getElementById('total-questions').textContent = allQuestions.length;
+      shuffleAndRender();
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function shuffleAndRender() {
+      const shuffled = shuffleArray(allQuestions);
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      shuffled.forEach((q, index) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'q-card';
+
+        const sentence = document.createElement('div');
+        sentence.className = 'q-sentence';
+
+        const numSpan = document.createElement('span');
+        numSpan.className = 'q-num';
+        numSpan.textContent = `Q${index + 1}.`;
+
+        const preSpan = document.createElement('span');
+        preSpan.textContent = q.promptPre + ' ';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.dataset.answers = JSON.stringify(q.correct.map(a => a.toLowerCase()));
+        input.dataset.primaryAnswer = q.correct[0];
+        input.dataset.assisted = "false";
+        input.id = `input-${index}`;
+        input.onchange = () => checkSingle(input);
+        input.onkeyup = (e) => { if (e.key === 'Enter') checkSingle(input); };
+
+        const postSpan = document.createElement('span');
+        postSpan.textContent = ' ' + q.promptPost;
+
+        const fbSpan = document.createElement('span');
+        fbSpan.id = `fb-${index}`;
+        fbSpan.className = 'feedback';
+
+        sentence.appendChild(numSpan);
+        sentence.appendChild(preSpan);
+        sentence.appendChild(input);
+        sentence.appendChild(postSpan);
+        sentence.appendChild(fbSpan);
+
+        const controls = document.createElement('div');
+        controls.className = 'q-controls';
+
+        const hintBtn = document.createElement('button');
+        hintBtn.className = 'btn-sm';
+        hintBtn.textContent = '💡 Hint';
+        hintBtn.onclick = () => toggleHint(index, q.hint);
+
+        const answerBtn = document.createElement('button');
+        answerBtn.className = 'btn-sm';
+        answerBtn.textContent = '👁️ Show Answer';
+        answerBtn.onclick = () => revealAnswer(input, index);
+
+        const hintText = document.createElement('span');
+        hintText.id = `hint-${index}`;
+        hintText.className = 'hint-text';
+
+        controls.appendChild(hintBtn);
+        controls.appendChild(answerBtn);
+        controls.appendChild(hintText);
+
+        qCard.appendChild(sentence);
+        qCard.appendChild(controls);
+
+        container.appendChild(qCard);
+      });
+
+      updateScore();
+    }
+
+    function checkSingle(input) {
+      const userVal = input.value.trim().toLowerCase();
+      const validAnswers = JSON.parse(input.dataset.answers);
+      const fbId = input.id.replace('input-', 'fb-');
+      const fb = document.getElementById(fbId);
+
+      if (userVal === '') {
+        input.className = '';
+        fb.textContent = '';
+      } else if (validAnswers.includes(userVal)) {
+        if (input.dataset.assisted === "true") {
+          input.className = 'assisted';
+          fb.textContent = '⚡ Correct (Assisted)';
+          fb.className = 'feedback assisted';
+        } else {
+          input.className = 'correct';
+          fb.textContent = '✓ Correct';
+          fb.className = 'feedback correct';
+        }
+      } else {
+        input.className = 'incorrect';
+        fb.textContent = '✗ Try again';
+        fb.className = 'feedback incorrect';
+      }
+      updateScore();
+    }
+
+    function toggleHint(index, hintMsg) {
+      const hintSpan = document.getElementById(`hint-${index}`);
+      if (hintSpan.textContent === '') {
+        hintSpan.textContent = `Hint: ${hintMsg}`;
+      } else {
+        hintSpan.textContent = '';
+      }
+    }
+
+    function revealAnswer(input, index) {
+      input.value = input.dataset.primaryAnswer;
+      input.dataset.assisted = "true";
+      checkSingle(input);
+    }
+
+    function updateScore() {
+      const correctCount = document.querySelectorAll('input.correct').length;
+      const assistedCount = document.querySelectorAll('input.assisted').length;
+      
+      document.getElementById('score-ind').textContent = `${correctCount}`;
+      document.getElementById('score-ast').textContent = `${assistedCount}`;
+    }
+
+    function resetAnswers() {
+      const inputs = document.querySelectorAll('input[type="text"]');
+      inputs.forEach(i => {
+        i.value = '';
+        i.className = '';
+        i.dataset.assisted = "false";
+      });
+      const feedbacks = document.querySelectorAll('.feedback');
+      feedbacks.forEach(f => f.textContent = '');
+      const hints = document.querySelectorAll('.hint-text');
+      hints.forEach(h => h.textContent = '');
+      updateScore();
+    }
+
+    function exportJSON() {
+      const exportData = {
+        title: quizTitle,
+        questions: allQuestions
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `${quizTitle.toLowerCase().replace(/\s+/g, '_')}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (importedData.questions && Array.isArray(importedData.questions)) {
+            allQuestions = importedData.questions;
+            if (importedData.title) quizTitle = importedData.title;
+            initQuiz();
+            alert("Quiz imported successfully!");
+          } else if (Array.isArray(importedData)) {
+            allQuestions = importedData;
+            initQuiz();
+            alert("Quiz questions imported successfully!");
+          } else {
+            alert("Invalid JSON format.");
+          }
+        } catch (err) {
+          alert("Error parsing JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    initQuiz();
+  </script>
+</body>
+</html>
