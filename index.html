@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bidirectional Vocabulary Test</title>
+  <title>Complete Bidirectional Vocabulary Test</title>
   <style>
     :root {
       --bg: #f4f6f9;
@@ -151,7 +151,7 @@
 </head>
 <body>
 
-  <h1 id="quiz-title">Bidirectional Vocabulary Test</h1>
+  <h1 id="quiz-title">Complete Bidirectional Vocabulary Test</h1>
   <p class="subtitle">Type your answer, or use the <b>Hint</b> and <b>Show Answer</b> options if stuck!</p>
 
   <div class="status-bar">
@@ -171,9 +171,9 @@
   <div id="quiz-container"></div>
 
   <script>
-    let quizTitle = "Bidirectional Vocabulary Test";
+    let quizTitle = "Complete Bidirectional Vocabulary Test";
 
-    // Dataset testing both Definition -> Word AND Word -> Definition
+    // Full Dataset with Bidirectional Pairs (58 Questions Total)
     let allQuestions = [
       // 1. Temperature
       { promptPre: "The measure of average kinetic energy of an object is called", correct: ["temperature"], hint: "Starts with 'T'. Think thermometer.", promptPost: "." },
@@ -197,7 +197,99 @@
 
       // 6. Qualitative Data
       { promptPre: "Descriptive data using the 5 senses is known as", correct: ["qualitative", "qualitative data"], hint: "Think 'Quality' (descriptions).", promptPost: "data." },
-      { promptPre: "Qualitative data is best defined as data gathering details using the five", correct: ["senses", "sense"], hint: "Sight, smell, touch, taste, hearing.", promptPost: "." }
+      { promptPre: "Qualitative data is best defined as data gathering details using the five", correct: ["senses", "sense"], hint: "Sight, smell, touch, taste, hearing.", promptPost: "." },
+
+      // 7. Empirical Evidence
+      { promptPre: "Information acquired by objective observation or experimentation verified by scientists is", correct: ["empirical", "empirical evidence"], hint: "Starts with 'E'. Based on real evidence.", promptPost: "evidence." },
+      { promptPre: "Empirical evidence is information verified through objective observation or", correct: ["experimentation", "experiments", "experiment"], hint: "Practical tests carried out by scientists.", promptPost: "." },
+
+      // 8. Accuracy
+      { promptPre: "How close a measurement is to the true or accepted value is called", correct: ["accuracy"], hint: "Hitting the bullseye.", promptPost: "." },
+      { promptPre: "Accuracy is defined as how close a measurement is to the true or accepted", correct: ["value"], hint: "The actual correct standard or number.", promptPost: "." },
+
+      // 9. Precision
+      { promptPre: "How close a series of measurements are to each other is referred to as", correct: ["precision"], hint: "Hitting the exact same spot repeatedly.", promptPost: "." },
+      { promptPre: "Precision describes how close a series of measurements are to", correct: ["each other", "one another"], hint: "Repeatability among measurements.", promptPost: "." },
+
+      // 10. Parallax Error
+      { promptPre: "The apparent shift in an object's position when viewed from different angles is", correct: ["parallax", "parallax error"], hint: "Starts with 'P'. Viewing angle error.", promptPost: "error." },
+      { promptPre: "Parallax error occurs due to the apparent shift in position when an object is viewed from different", correct: ["angles", "viewpoints", "perspectives"], hint: "Line of sight position.", promptPost: "." },
+
+      // 11. Independent Variable
+      { promptPre: "The factor intentionally changed or manipulated by a scientist is the", correct: ["independent", "independent variable"], hint: "'I' change this variable.", promptPost: "variable." },
+      { promptPre: "The variable intentionally manipulated by the researcher during an experiment is called the", correct: ["independent variable", "independent"], hint: "Starts with 'I'.", promptPost: "." },
+
+      // 12. X-axis
+      { promptPre: "The independent variable is typically plotted on the", correct: ["x", "x-axis", "x axis"], hint: "Horizontal axis letter.", promptPost: "-axis." },
+      { promptPre: "On a standard graph, the horizontal line where independent variables are plotted is the", correct: ["x-axis", "x axis", "x"], hint: "Single letter designation.", promptPost: "." },
+
+      // 13. Dependent Variable
+      { promptPre: "The factor measured or observed in response to an experiment is the", correct: ["dependent", "dependent variable"], hint: "It responds to the change made.", promptPost: "variable." },
+      { promptPre: "The variable measured to observe the response or effect in an experiment is the", correct: ["dependent variable", "dependent"], hint: "Starts with 'D'.", promptPost: "." },
+
+      // 14. Y-axis
+      { promptPre: "The dependent variable is typically plotted on the", correct: ["y", "y-axis", "y axis"], hint: "Vertical axis letter.", promptPost: "-axis." },
+      { promptPre: "On a standard graph, the vertical line where dependent variables are plotted is the", correct: ["y-axis", "y axis", "y"], hint: "Single letter designation.", promptPost: "." },
+
+      // 15. Constants / Control
+      { promptPre: "Factors that must be kept exactly the same for a fair test are called the control or", correct: ["constant", "constants"], hint: "Stays unchanging throughout.", promptPost: "." },
+      { promptPre: "Constants in an experiment are defined as factors that are kept", correct: ["the same", "unchanged", "constant", "identical"], hint: "Maintained without changes.", promptPost: "throughout the test." },
+
+      // 16. Outlier
+      { promptPre: "A data point distinctly separate from the rest (an anomaly) is an", correct: ["outlier"], hint: "Lies outside the normal range.", promptPost: "." },
+      { promptPre: "An outlier is defined as a data point that is distinctly separate from the rest, also called an", correct: ["anomaly"], hint: "Starts with 'A'. Unusual observation.", promptPost: "." },
+
+      // 17. Spring Scale
+      { promptPre: "A tool measuring mass in grams and force in newtons is a", correct: ["spring scale"], hint: "Uses a metal spring stretching down.", promptPost: "." },
+      { promptPre: "A spring scale is a laboratory instrument used to measure force in newtons and mass in", correct: ["grams"], hint: "Metric unit for mass.", promptPost: "." },
+
+      // 18. Triple Beam Balance
+      { promptPre: "A tool measuring mass in grams using three sliding beams is a", correct: ["triple beam balance"], hint: "Has 3 metal beams with weights.", promptPost: "." },
+      { promptPre: "A triple beam balance measures mass in grams by utilizing three sliding", correct: ["beams", "poises", "weights"], hint: "Parallel metal tracks with weights.", promptPost: "." },
+
+      // 19. Graduated Cylinder
+      { promptPre: "A tool measuring volume in milliliters is a", correct: ["graduated cylinder"], hint: "Tall glass or plastic tube with lines.", promptPost: "." },
+      { promptPre: "A graduated cylinder is a laboratory instrument specifically designed to measure volume in", correct: ["milliliters", "ml"], hint: "1/1000th of a liter.", promptPost: "." },
+
+      // 20. Meniscus
+      { promptPre: "The bottom of the curve formed by liquid in a measurement container is the", correct: ["meniscus"], hint: "Curved liquid line.", promptPost: "." },
+      { promptPre: "The curved upper surface of a liquid in a tube is called the", correct: ["meniscus"], hint: "Read measurement at the bottom of it.", promptPost: "." },
+
+      // 21. Imperial System
+      { promptPre: "The system derived from the British Empire using feet and inches is the", correct: ["imperial", "imperial system"], hint: "Used mostly in America.", promptPost: "system." },
+      { promptPre: "The imperial measurement system includes traditional units such as feet, pounds, and", correct: ["inches", "miles", "gallons", "ounces"], hint: "A common small unit of length.", promptPost: "." },
+
+      // 22. Metric System
+      { promptPre: "The system used universally by the scientific community is the", correct: ["metric", "metric system"], hint: "Used by the rest of the world and science.", promptPost: "system." },
+      { promptPre: "The standard system of measurement used universally by the international scientific community is the", correct: ["metric system", "metric"], hint: "Decimal-based system.", promptPost: "." },
+
+      // 23. Prefix Kilo-
+      { promptPre: "The prefix Kilo- represents", correct: ["1000", "1,000", "1000 times", "1,000 times"], hint: "1 followed by three zeros.", promptPost: "times bigger than the base unit." },
+      { promptPre: "The metric prefix that denotes a factor of 1,000 times the base unit is", correct: ["kilo", "kilo-"], hint: "Starts with 'K'.", promptPost: "." },
+
+      // 24. Prefix Centi-
+      { promptPre: "The prefix Centi- represents", correct: ["1/100", "1/100th", "one hundredth"], hint: "Fraction for 1 out of 100.", promptPost: "times smaller than the base unit." },
+      { promptPre: "The metric prefix that represents 1/100th (one hundredth) of a base unit is", correct: ["centi", "centi-"], hint: "Starts with 'C'. Think century.", promptPost: "." },
+
+      // 25. Prefix Milli-
+      { promptPre: "The prefix Milli- represents", correct: ["1/1000", "1/1000th", "one thousandth"], hint: "Fraction for 1 out of 1,000.", promptPost: "times smaller than the base unit." },
+      { promptPre: "The metric prefix that represents 1/1,000th (one thousandth) of a base unit is", correct: ["milli", "milli-"], hint: "Starts with 'M'. Think millimeter.", promptPost: "." },
+
+      // 26. Greek Prefixes
+      { promptPre: "Greek prefixes represent large numbers and mean", correct: ["multiplying", "multiply"], hint: "The opposite of dividing.", promptPost: "the unit." },
+      { promptPre: "In metric terminology, prefixes derived from Greek are used for large numbers to indicate", correct: ["multiplication", "multiplying", "multiply"], hint: "Mathematical operation increasing magnitude.", promptPost: "the base unit." },
+
+      // 27. Latin Prefixes
+      { promptPre: "Latin prefixes represent fractions and mean", correct: ["dividing", "divide"], hint: "Cutting into smaller pieces.", promptPost: "the unit." },
+      { promptPre: "In metric terminology, prefixes derived from Latin are used for fractional amounts to indicate", correct: ["division", "dividing", "divide"], hint: "Mathematical operation breaking into smaller parts.", promptPost: "the base unit." },
+
+      // 28. Root Word: Meter / Metr
+      { promptPre: "The root word Meter / Metr means", correct: ["measure"], hint: "What you do when determining size.", promptPost: "." },
+      { promptPre: "The root word meaning 'measure' found in words like perimeter or metric is", correct: ["meter", "metr"], hint: "Starts with 'M'.", promptPost: "." },
+
+      // 29. Root Word: Grad
+      { promptPre: "The root word Grad means", correct: ["step", "step, stage, or degree"], hint: "A single mark or stage in sequence.", promptPost: ", stage, or degree." },
+      { promptPre: "The root word found in 'graduated cylinder' or 'gradual' that means step, stage, or degree is", correct: ["grad"], hint: "Starts with 'G'.", promptPost: "." }
     ];
 
     function initQuiz() {
